@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings/
+desktop.ini
+.DS_Store
+conf/conf.xml
+bin/

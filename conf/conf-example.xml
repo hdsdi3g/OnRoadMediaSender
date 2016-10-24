@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+	<quality>
+		<label>HD</label>
+		<file_suffix>_HD</file_suffix>
+		<video_codec>h264</video_codec>
+		<video_bitrate>4000k</video_bitrate>
+		<video_resolution>HD_1080</video_resolution>
+		<audio_codec>aac</audio_codec>
+		<audio_bitrate>256k</audio_bitrate>
+		<file_extension>mp4</file_extension>
+	</quality>
+	<quality>
+		<label>HQ</label>
+		<file_suffix>_HQ</file_suffix>
+		<video_codec>h264</video_codec>
+		<video_bitrate>2000k</video_bitrate>
+		<video_resolution>HD_720</video_resolution>
+		<audio_codec>aac</audio_codec>
+		<audio_bitrate>256k</audio_bitrate>
+		<file_extension>mp4</file_extension>
+	</quality>
+	<destination>
+		<protocol>ftp</protocol>
+		<label>My TV Station FTP server</label>
+		<host>ftp.myserver.com</host>
+		<username>ftpuser</username>
+		<password>ftppassword</password>
+		<port>21</port>
+		<passive>true</passive>
+	</destination>
+	<ffprobe>C:\Program Files\ffmpeg\bin\ffprobe</ffprobe>
+	<ffmpeg>C:\Program Files\ffmpeg\bin\ffmpeg</ffmpeg>
+	<vendor>
+		<title>On Road Media Sender</title>
+		<logo>logo-demo.png</logo>
+	</vendor>
+	<messagepatternlayout>
+		<out>%d{ISO8601} %-5p %c &#8249;%t&#8250;&#9;&#8220;%m&#8221;%n &#8227; %C.%M(%F:%L)%n%n</out>
+		<err>%d{ISO8601} %-5p %c &#8249;%t&#8250;&#9;&#8220;%m&#8221;%n &#8227; %C.%M(%F:%L)%n%n</err>
+		<file>%d{ISO8601} %-5p %c &#8249;%t&#8250;&#9;%m&#9;%n</file>
+	</messagepatternlayout>
+</configuration>
