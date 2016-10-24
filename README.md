@@ -27,6 +27,7 @@ After change the configuration for setup the FTP destination(s), drag&drop a fil
 
 ## Setup
 Write in Java FX 8, it run with **Java 8** JRE and some dependencies :
+- [ffprobe-jaxb-1.0.jar](https://github.com/hdsdi3g/ffprobe-jaxb/releases/download/v1.0/ffprobe-jaxb-1.0.jar)
 - commons-beanutils-1.9.2.jar
 - commons-configuration2-2.1.jar
 - commons-io-2.4.jar
