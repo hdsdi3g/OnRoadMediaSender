@@ -18,7 +18,6 @@ package hd3gtv.onroadmediasend;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -174,13 +173,21 @@ public class MainControler {
 	}
 	
 	private void prepareLogToSessionFile() throws IOException {
+		/**
+		 * Windows's user conf files
+		 */
 		local_user_dir = new File(System.getenv().getOrDefault("APPDATA", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (local_user_dir.getName().equals("")) { //$NON-NLS-1$
-			// TODO no app data > OSX ?
-			System.err.println("Can't found APPDATA env"); //$NON-NLS-1$
-			System.err.println("ALL ENV:"); //$NON-NLS-1$
-			System.err.println(System.getenv());
-			throw new FileNotFoundException("APPDATA"); //$NON-NLS-1$
+			/**
+			 * OSX's user conf files
+			 */
+			local_user_dir = new File(System.getenv().getOrDefault("HOME", "") + "/Library/Application Support"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (local_user_dir.getName().startsWith("/Library/Application Support")) { //$NON-NLS-1$
+				/**
+				 * Other
+				 */
+				local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
+			}
 		}
 		FileValidation.checkExistsCanRead(local_user_dir);
 		FileValidation.checkIsDirectory(local_user_dir);
