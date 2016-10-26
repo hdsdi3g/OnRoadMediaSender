@@ -112,10 +112,18 @@ public class MainControler {
 		
 		stage.setTitle(configuration.get().getString("vendor.title", "OnRoadMediaSender")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		temp_directory = new File(configuration.get().getString("tempdir", System.getProperty("java.io.tmpdir"))); //$NON-NLS-1$ //$NON-NLS-2$
-		if (temp_directory.exists() == false) {
-			if (temp_directory.mkdirs() == false) {
-				temp_directory = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+		String default_tmpdir = System.getProperty("java.io.tmpdir") + File.separator + "onroadmediasend"; //$NON-NLS-1$ //$NON-NLS-2$
+		String wanted_temp_dir = configuration.get().getString("tempdir");//$NON-NLS-1$
+		
+		if (wanted_temp_dir == null) {
+			temp_directory = new File(default_tmpdir);
+			FileUtils.forceMkdir(temp_directory);
+		} else {
+			temp_directory = new File(wanted_temp_dir);
+			if (temp_directory.exists() == false) {
+				if (temp_directory.mkdirs() == false) {
+					temp_directory = new File(default_tmpdir);
+				}
 			}
 		}
 		
