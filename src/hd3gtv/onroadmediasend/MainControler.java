@@ -18,12 +18,16 @@ package hd3gtv.onroadmediasend;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.commons.configuration2.HierarchicalConfiguration;
@@ -31,6 +35,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
@@ -78,6 +83,8 @@ import javafx.stage.Stage;
 public class MainControler {
 	
 	private final static Logger log = Logger.getLogger(MainControler.class);
+	
+	private volatile HashMap<String, File> cache_executable;
 	
 	private Stage stage;
 	private LogAppenderHandler log_appender_handler;
@@ -142,6 +149,17 @@ public class MainControler {
 		} else {
 			new AppAlert(Messages.getString("MainControler.nodest_inconf"), e -> { //$NON-NLS-1$
 				System.exit(1);
+			}).showAndWait();
+		}
+		
+		cache_executable = new HashMap<>(2);
+		try {
+			getExecutable("ffmpeg"); //$NON-NLS-1$
+			getExecutable("ffprobe"); //$NON-NLS-1$
+		} catch (IOException e) {
+			log.fatal("Can't found executable", e); //$NON-NLS-1$
+			new AppAlert(Messages.getString("MainControler.noexec") + "\n" + e.getMessage(), ok -> { //$NON-NLS-1$ //$NON-NLS-2$
+				System.exit(2);
 			}).showAndWait();
 		}
 		
@@ -526,6 +544,73 @@ public class MainControler {
 			} catch (Exception e) {
 			}
 		}
+	}
+	
+	/**
+	 * Search in XML configuration
+	 * Search in PATH
+	 * Search in conf directory
+	 * Search in parent conf directory
+	 * Search in /bin from parent conf directory
+	 * Search in /bin from user profile
+	 * Search in ~/bin
+	 * Search in ~/App
+	 * Search in ~/App/bin
+	 */
+	public File getExecutable(String name) throws FileNotFoundException {
+		if (cache_executable.containsKey(name)) {
+			return cache_executable.get(name);
+		}
+		
+		String configuration_entry = configuration.get().getString(name);
+		if (configuration_entry != null) {
+			File result = new File(configuration_entry);
+			if (result.exists() && result.canExecute() && result.isFile()) {
+				cache_executable.put(name, result);
+				log.debug("Found " + name + " exec in " + result.getPath()); //$NON-NLS-1$//$NON-NLS-2$
+				return result;
+			} else {
+				log.warn("Executable " + name + " configured in " + result.getName() + " don't exist"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			}
+		}
+		
+		ArrayList<String> path = new ArrayList<>();
+		path.add(configuration.getDirectoryConf().getAbsolutePath());
+		path.add(configuration.getDirectoryConf().getParent());
+		path.add(configuration.getDirectoryConf().getParent() + File.separator + "bin"); //$NON-NLS-1$
+		path.add(System.getProperty("user.home") + File.separator + "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+		path.add(System.getProperty("user.home") + File.separator + "App"); //$NON-NLS-1$ //$NON-NLS-2$
+		path.add(System.getProperty("user.home") + File.separator + "App" + File.separator + "bin"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		path.addAll(Arrays.asList(System.getenv("PATH").split(File.pathSeparator))); //$NON-NLS-1$
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		if (SystemUtils.IS_OS_WINDOWS) {
+			if (name.toLowerCase().endsWith(".exe") == false) { //$NON-NLS-1$
+				sb.append(".exe"); //$NON-NLS-1$
+			}
+		}
+		
+		final String search_name = sb.toString();
+		
+		Optional<File> o_exec = path.stream().map(current_path -> {
+			File candidate = new File(current_path + File.separator + search_name);
+			if (candidate.exists() && candidate.isFile() && candidate.canExecute()) {
+				return candidate;
+			} else {
+				return null;
+			}
+		}).filter(predicate -> {
+			return predicate != null;
+		}).findFirst();
+		
+		if (o_exec.isPresent()) {
+			cache_executable.put(name, o_exec.get());
+			log.debug("Found " + name + " exec in " + o_exec.get().getPath()); //$NON-NLS-1$//$NON-NLS-2$
+			return o_exec.get();
+		}
+		
+		throw new FileNotFoundException("Exec named " + name); //$NON-NLS-1$
 	}
 	
 }

@@ -142,7 +142,7 @@ public class FileToSend {
 				
 				FFprobe ffprobe = null;
 				try {
-					ffprobe = new FFprobe(fsource, new File(controller.getConfiguration().get().getString("ffprobe", "ffprobe"))); //$NON-NLS-1$ //$NON-NLS-2$
+					ffprobe = new FFprobe(fsource, controller.getExecutable("ffprobe")); //$NON-NLS-1$
 					ffprobe.process();
 					setFfprobe(ffprobe);
 				} catch (Exception e) {

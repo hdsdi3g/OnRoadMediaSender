@@ -81,7 +81,7 @@ public class TranscodeOperation extends ActionTask {
 		Progression progression = new Progression(progress_size, progression_display);
 		
 		try {
-			ffmpeg = new FFmpeg(original, transcoded_temp_file, quality, ffprobe, new File(controler.getConfiguration().get().getString("ffmpeg", "ffmpeg")), controler.getTempDirectory()); //$NON-NLS-1$ //$NON-NLS-2$
+			ffmpeg = new FFmpeg(original, transcoded_temp_file, quality, ffprobe, controler.getExecutable("ffmpeg"), controler.getTempDirectory()); //$NON-NLS-1$
 			ffmpeg.process(progression, global_progress);
 		} catch (Exception e) {
 			if (transcoded_temp_file.exists()) {
