@@ -5,3 +5,4 @@ desktop.ini
 .DS_Store
 conf/conf.xml
 bin/
+conf/log4j.xml
