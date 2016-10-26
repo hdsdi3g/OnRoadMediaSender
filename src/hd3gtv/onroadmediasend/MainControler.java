@@ -139,30 +139,28 @@ public class MainControler {
 		
 		prepareControls();
 		
-		File external_logo = new File(configuration.get().getString("vendor.logo")); //$NON-NLS-1$
-		if (external_logo != null) {
-			if (external_logo.exists() == false) {
-				external_logo = new File(configuration.getDirectoryConf().getAbsolutePath() + File.separator + external_logo.getName());
-			}
-			if (external_logo.exists() && external_logo.canRead() && external_logo.isFile()) {
-				log.debug("Load logo file: " + external_logo.getPath()); //$NON-NLS-1$
-				Image logo = new Image(external_logo.toURI().toString());
-				if (logo.getHeight() > image_logo.getFitHeight() || logo.getWidth() > image_logo.getFitWidth()) {
-					File new_converted_logo = new File(external_logo.getParentFile().getAbsolutePath() + File.separator + FilenameUtils.getBaseName(external_logo.getName()) + "-converted.png"); //$NON-NLS-1$
-					try {
-						FFmpeg.convertImage(new File(configuration.get().getString("ffmpeg", "ffmpeg")), external_logo, new_converted_logo, (int) Math.round(image_logo.getFitWidth()), //$NON-NLS-1$ //$NON-NLS-2$
-								(int) Math.round(image_logo.getFitHeight()));
-						logo = new Image(new_converted_logo.toURI().toString());
-						configuration.get().setProperty("vendor.logo", new_converted_logo.getAbsolutePath()); //$NON-NLS-1$
-					} catch (Exception e) {
-						log.error("Can't convert logo", e); //$NON-NLS-1$
-					}
+		File external_logo = new File(configuration.get().getString("vendor.logo", "logo-demo.png")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (external_logo.exists() == false) {
+			external_logo = new File(configuration.getDirectoryConf().getAbsolutePath() + File.separator + external_logo.getName());
+		}
+		if (external_logo.exists() && external_logo.canRead() && external_logo.isFile()) {
+			log.debug("Load logo file: " + external_logo.getPath()); //$NON-NLS-1$
+			Image logo = new Image(external_logo.toURI().toString());
+			if (logo.getHeight() > image_logo.getFitHeight() || logo.getWidth() > image_logo.getFitWidth()) {
+				File new_converted_logo = new File(external_logo.getParentFile().getAbsolutePath() + File.separator + FilenameUtils.getBaseName(external_logo.getName()) + "-converted.png"); //$NON-NLS-1$
+				try {
+					FFmpeg.convertImage(new File(configuration.get().getString("ffmpeg", "ffmpeg")), external_logo, new_converted_logo, (int) Math.round(image_logo.getFitWidth()), //$NON-NLS-1$ //$NON-NLS-2$
+							(int) Math.round(image_logo.getFitHeight()));
+					logo = new Image(new_converted_logo.toURI().toString());
+					configuration.get().setProperty("vendor.logo", new_converted_logo.getAbsolutePath()); //$NON-NLS-1$
+				} catch (Exception e) {
+					log.error("Can't convert logo", e); //$NON-NLS-1$
 				}
-				
-				image_logo.setImage(logo);
-			} else {
-				log.warn("Can't found logo file: " + external_logo.getPath()); //$NON-NLS-1$
 			}
+			
+			image_logo.setImage(logo);
+		} else {
+			log.warn("Can't found logo file: " + external_logo.getPath()); //$NON-NLS-1$
 		}
 		
 		queue = new Queue(this);
