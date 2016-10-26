@@ -10,6 +10,8 @@ Translated in english (as i can), and natural french.
 ## Usage
 After change the configuration for setup the FTP destination(s), drag&drop a file in table and it will be converted and sended. Or just sended.
 
+![screenshot](https://raw.githubusercontent.com/hdsdi3g/OnRoadMediaSender/gh-pages/img/screenshot.jpg)
+
 ## Functionalities
 - auto-detect files format and auto select the action todo with it
 - transcode only hi-bitrates video and audio files: if the submitted file has a low bitrate, it don't transcode it
