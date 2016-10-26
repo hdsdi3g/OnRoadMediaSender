@@ -16,9 +16,9 @@
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="27.0" />
             <ChoiceBox fx:id="cb_level" prefHeight="25.0" prefWidth="93.0" />
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="27.0" />
-            <Button fx:id="btnopenconfdir" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="%btn.openconfdir" />
+            <Button fx:id="btnopenconfdir" mnemonicParsing="false" prefHeight="25.0" prefWidth="130.0" text="%btn.openconfdir" />
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="27.0" />
-            <Button fx:id="btnopentempdir" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="%btn.opentempdir" />
+            <Button fx:id="btnopentempdir" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="130.0" text="%btn.opentempdir" />
         </items>
       </ToolBar>
    </bottom>
