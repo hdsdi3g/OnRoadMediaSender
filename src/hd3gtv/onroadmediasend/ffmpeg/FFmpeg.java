@@ -75,8 +75,8 @@ public class FFmpeg {
 		if (ffmpeg_exec_file == null) {
 			throw new NullPointerException("\"ffmpeg_exec_file\" can't to be null"); //$NON-NLS-1$
 		}
-		FileValidation.checkExistsCanRead(source_file);
-		FileValidation.checkCanExecute(source_file);
+		FileValidation.checkExistsCanRead(ffmpeg_exec_file);
+		FileValidation.checkCanExecute(ffmpeg_exec_file);
 		
 		this.temp_directory = temp_directory;
 		if (temp_directory == null) {

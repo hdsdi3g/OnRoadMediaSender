@@ -43,4 +43,15 @@ public enum OperationState {
 			return Messages.getString("OperationState.invalid"); //$NON-NLS-1$
 		}
 	}
+	
+	public boolean isDoneOrError() {
+		if (this == OperationState.SENDED) {
+			return true;
+		} else if (this == OperationState.ERROR) {
+			return true;
+		} else if (this == OperationState.CANCELED) {
+			return true;
+		}
+		return false;
+	}
 }

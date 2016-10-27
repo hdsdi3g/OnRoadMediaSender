@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -109,7 +110,6 @@ public class MainControler {
 		list_rows_files_to_send = FXCollections.observableArrayList();
 		list_qualities = FXCollections.observableArrayList();
 		list_destinations = FXCollections.observableArrayList();
-		
 		configuration = new MainConfiguration();
 		
 		log_appender_handler = new LogAppenderHandler(configuration);
@@ -117,7 +117,7 @@ public class MainControler {
 		prepareLogToSessionFile();
 		Logger.getRootLogger().addAppender(appender_to_file);
 		
-		stage.setTitle(configuration.get().getString("vendor.title", "OnRoadMediaSender")); //$NON-NLS-1$ //$NON-NLS-2$
+		stage.setTitle(configuration.get().getString("vendor.title", "On Road Media Sender")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String default_tmpdir = System.getProperty("java.io.tmpdir") + File.separator + "onroadmediasend"; //$NON-NLS-1$ //$NON-NLS-2$
 		String wanted_temp_dir = configuration.get().getString("tempdir");//$NON-NLS-1$
@@ -202,11 +202,12 @@ public class MainControler {
 		 */
 		local_user_dir = new File(System.getenv().getOrDefault("APPDATA", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (local_user_dir.getName().equals("")) { //$NON-NLS-1$
-			/**
-			 * OSX's user conf files
-			 */
-			local_user_dir = new File(System.getenv().getOrDefault("HOME", "") + "/Library/Application Support"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (local_user_dir.getName().startsWith("/Library/Application Support")) { //$NON-NLS-1$
+			try {
+				/**
+				 * OSX's user conf files
+				 */
+				local_user_dir = com.apple.mrj.MRJFileUtils.findFolder(com.apple.mrj.MRJFileUtils.kPreferencesFolderType); // $NON-NLS-1$
+			} catch (Exception e) {
 				/**
 				 * Other
 				 */
@@ -240,12 +241,30 @@ public class MainControler {
 		return new Progression(0l, 0, progress_upload.progressProperty(), label_possize_upload.textProperty(), label_eta_upload.textProperty(), label_percent_upload.textProperty());
 	}
 	
+	public void updateActiveItems() {
+		if (SystemUtils.IS_OS_MAC_OSX) {
+			AtomicInteger active = new AtomicInteger(0);
+			list_rows_files_to_send.forEach(i -> {
+				if (i.getState().get().isDoneOrError() == false) {
+					active.incrementAndGet();
+				}
+			});
+			
+			if (active.get() == 0) {
+				Main.setOSXDockBadge(""); //$NON-NLS-1$
+			} else {
+				Main.setOSXDockBadge(String.valueOf(active.get()));
+			}
+		}
+	}
+	
 	public void addFileToSend(FileToSend file) {
 		list_rows_files_to_send.add(file);
 	}
 	
 	public void removeFileToSend(FileToSend file) {
 		list_rows_files_to_send.remove(file);
+		updateActiveItems();
 	}
 	
 	public Queue getQueue() {

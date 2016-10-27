@@ -72,7 +72,13 @@ public abstract class ActionTask extends Task<Void> {
 	protected abstract void internalProcess(TaskUpdateGlobalProgress global_progress) throws Exception;
 	
 	protected final Void call() throws Exception {
-		internalProcess(global_progress);
+		try {
+			internalProcess(global_progress);
+		} catch (Exception e) {
+			controler.updateActiveItems();
+			throw e;
+		}
+		controler.updateActiveItems();
 		return null;
 	}
 }

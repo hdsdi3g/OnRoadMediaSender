@@ -134,6 +134,7 @@ public class FileToSend {
 			protected Void call() throws Exception {
 				size_duration.set(new SizeDuration(fsource.length()));
 				controller.addFileToSend(fsuper);
+				controller.updateActiveItems();
 				
 				if (FilenameUtils.isExtension(source.getName().toLowerCase(), Arrays.asList("jpg", "png", "jpeg", "gif", "ico", "svg", "tga", "tif", "tiff", "psd"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 					operation.set(OperationState.WAITING);
@@ -181,6 +182,7 @@ public class FileToSend {
 			new AppAlert(Messages.getString("FileToSend.cantadd") + fsource.getAbsolutePath(), onclose -> { //$NON-NLS-1$
 				controller.removeFileToSend(this);
 			});
+			controller.updateActiveItems();
 		});
 		
 		t.setOnSucceeded(event -> {

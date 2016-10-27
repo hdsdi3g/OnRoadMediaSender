@@ -16,7 +16,11 @@
 */
 package hd3gtv.onroadmediasend;
 
+import java.lang.reflect.Method;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.log4j.Logger;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +37,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primary_stage) {
 		try {
+			if (SystemUtils.IS_OS_MAC_OSX) {
+				setOSXDockIcon(getClass(), "icon.png");
+			}
+			
 			FXMLLoader d = new FXMLLoader();
 			d.setResources(ResourceBundle.getBundle(Main.class.getPackage().getName() + ".messages"));
 			BorderPane root = (BorderPane) d.load(getClass().getResource("MainApp.fxml").openStream());
@@ -56,6 +64,40 @@ public class Main extends Application {
 		
 		Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private static Class<?> osx_app_class;
+	private static Object osx_app;
+	
+	private static void setOSXDockIcon(Class<?> class_ref, String ressource_name) {
+		try {
+			osx_app_class = Class.forName("com.apple.eawt.Application");
+			Object _osx_app = osx_app_class.newInstance();
+			
+			Method meth_osx_app = osx_app_class.getMethod("getApplication");
+			osx_app = meth_osx_app.invoke(_osx_app);
+			
+			Method meth_setdock = osx_app_class.getMethod("setDockIconImage", java.awt.Image.class);
+			
+			java.awt.Image i = new javax.swing.ImageIcon(Main.class.getResource("icon.png")).getImage();
+			meth_setdock.invoke(osx_app, i);
+			
+			// com.apple.eawt.Application.getApplication().setDockIconImage(i);
+			// a.setDockIconBadge("2");
+		} catch (Exception e) {
+			Logger.getLogger(class_ref).warn("Can't set OSX icon", e);
+		}
+	}
+	
+	public static void setOSXDockBadge(String value) {
+		try {
+			osx_app_class.getMethod("setDockIconBadge", String.class).invoke(osx_app, value);
+			// com.apple.eawt.Application.getApplication().setDockIconBadge("2");
+		} catch (Exception e) {
+			if (Logger.getLogger(Main.class).isDebugEnabled()) {
+				Logger.getLogger(Main.class).debug("Can't set OSX badge", e);
+			}
 		}
 	}
 	
