@@ -206,13 +206,14 @@ public class MainControler {
 				/**
 				 * OSX's user conf files
 				 */
-				local_user_dir = com.apple.mrj.MRJFileUtils.findFolder(com.apple.mrj.MRJFileUtils.kPreferencesFolderType); // $NON-NLS-1$
+				// local_user_dir = com.apple.mrj.MRJFileUtils.findFolder(com.apple.mrj.MRJFileUtils.kPreferencesFolderType); // $NON-NLS-1$
 			} catch (Exception e) {
 				/**
 				 * Other
 				 */
-				local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
+				// local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
 			}
+			local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
 		}
 		FileValidation.checkExistsCanRead(local_user_dir);
 		FileValidation.checkIsDirectory(local_user_dir);
