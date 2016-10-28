@@ -72,9 +72,9 @@ public class Main extends Application {
 	private static void setOSXDockIcon(Class<?> class_ref, String ressource_name) {
 		try {
 			java.awt.Image i = new javax.swing.ImageIcon(Main.class.getResource("icon.png")).getImage();
+			FreehandClass fc_image = new FreehandClass(i, java.awt.Image.class);
 			fc_Application = FreehandClass.staticCall("com.apple.eawt.Application", "getApplication");
-			fc_Application.call("setDockIconImage", i);
-			
+			fc_Application.call("setDockIconImage", fc_image);
 			// com.apple.eawt.Application.getApplication().setDockIconImage(i);
 		} catch (Exception e) {
 			Logger.getLogger(class_ref).warn("Can't set OSX icon", e);

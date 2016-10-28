@@ -208,13 +208,17 @@ public class MainControler {
 				 * OSX's user conf files
 				 */
 				FreehandClass fc_kPreferencesFolderType = FreehandClass.staticVariable("com.apple.mrj.MRJFileUtils", "kPreferencesFolderType"); //$NON-NLS-1$ //$NON-NLS-2$
-				FreehandClass fc_local_user_dir = FreehandClass.staticCall(" com.apple.mrj.MRJFileUtils", "findFolder", fc_kPreferencesFolderType); //$NON-NLS-1$ //$NON-NLS-2$
+				FreehandClass fc_local_user_dir = FreehandClass.staticCall("com.apple.mrj.MRJFileUtils", "findFolder", fc_kPreferencesFolderType); //$NON-NLS-1$ //$NON-NLS-2$
 				local_user_dir = fc_local_user_dir.getInstance(File.class);
 			} catch (Exception e) {
 				/**
 				 * Other
 				 */
 				local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
+				
+				if (SystemUtils.IS_OS_MAC_OSX) {
+					log.error("Can't load OSX dir", e);//$NON-NLS-1$
+				}
 			}
 		}
 		FileValidation.checkExistsCanRead(local_user_dir);

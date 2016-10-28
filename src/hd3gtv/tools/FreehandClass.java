@@ -40,6 +40,14 @@ public final class FreehandClass {
 		this_class = Class.forName(full_class_name);
 	}
 	
+	/**
+	 * Used for manually set the object and the class... and force Object signature.
+	 */
+	public FreehandClass(Object o, Class<?> o_class) {
+		this_class = o_class;
+		this_instance = o;
+	}
+	
 	private FreehandClass(Object o) {
 		this_class = o.getClass();
 		this_instance = o;
