@@ -16,12 +16,12 @@
 */
 package hd3gtv.onroadmediasend;
 
-import java.lang.reflect.Method;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
+import hd3gtv.tools.FreehandClass;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -67,24 +67,15 @@ public class Main extends Application {
 		}
 	}
 	
-	private static Class<?> osx_app_class;
-	private static Object osx_app;
+	private static FreehandClass fc_Application;
 	
 	private static void setOSXDockIcon(Class<?> class_ref, String ressource_name) {
 		try {
-			osx_app_class = Class.forName("com.apple.eawt.Application");
-			Object _osx_app = osx_app_class.newInstance();
-			
-			Method meth_osx_app = osx_app_class.getMethod("getApplication");
-			osx_app = meth_osx_app.invoke(_osx_app);
-			
-			Method meth_setdock = osx_app_class.getMethod("setDockIconImage", java.awt.Image.class);
-			
 			java.awt.Image i = new javax.swing.ImageIcon(Main.class.getResource("icon.png")).getImage();
-			meth_setdock.invoke(osx_app, i);
+			fc_Application = FreehandClass.staticCall("com.apple.eawt.Application", "getApplication");
+			fc_Application.call("setDockIconImage", i);
 			
 			// com.apple.eawt.Application.getApplication().setDockIconImage(i);
-			// a.setDockIconBadge("2");
 		} catch (Exception e) {
 			Logger.getLogger(class_ref).warn("Can't set OSX icon", e);
 		}
@@ -92,7 +83,7 @@ public class Main extends Application {
 	
 	public static void setOSXDockBadge(String value) {
 		try {
-			osx_app_class.getMethod("setDockIconBadge", String.class).invoke(osx_app, value);
+			fc_Application.call("setDockIconBadge", value);
 			// com.apple.eawt.Application.getApplication().setDockIconBadge("2");
 		} catch (Exception e) {
 			if (Logger.getLogger(Main.class).isDebugEnabled()) {

@@ -52,6 +52,7 @@ import hd3gtv.onroadmediasend.ffmpeg.FFmpeg;
 import hd3gtv.onroadmediasend.logpanel.LWControler;
 import hd3gtv.onroadmediasend.logpanel.LogAppenderHandler;
 import hd3gtv.tools.FileValidation;
+import hd3gtv.tools.FreehandClass;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -206,14 +207,15 @@ public class MainControler {
 				/**
 				 * OSX's user conf files
 				 */
-				// local_user_dir = com.apple.mrj.MRJFileUtils.findFolder(com.apple.mrj.MRJFileUtils.kPreferencesFolderType); // $NON-NLS-1$
+				FreehandClass fc_kPreferencesFolderType = FreehandClass.staticVariable("com.apple.mrj.MRJFileUtils", "kPreferencesFolderType"); //$NON-NLS-1$ //$NON-NLS-2$
+				FreehandClass fc_local_user_dir = FreehandClass.staticCall(" com.apple.mrj.MRJFileUtils", "findFolder", fc_kPreferencesFolderType); //$NON-NLS-1$ //$NON-NLS-2$
+				local_user_dir = fc_local_user_dir.getInstance(File.class);
 			} catch (Exception e) {
 				/**
 				 * Other
 				 */
-				// local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
+				local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
 			}
-			local_user_dir = new File(System.getProperty("user.home"));//$NON-NLS-1$
 		}
 		FileValidation.checkExistsCanRead(local_user_dir);
 		FileValidation.checkIsDirectory(local_user_dir);
